@@ -1,6 +1,7 @@
 import ICreateUsersDTO from '../dtos/ICreateUsersDTO';
 import User from '../infra/typeorm/entities/User';
 
-export default interface ICarsRepository {
-  create(data: ICreateUsersDTO): Promise<User>;
+export default interface IUsersRepository {
+  create(data: ICreateUsersDTO): Promise<User | null>;
+  getUserByUsername(username: string): Promise<User | null>
 }

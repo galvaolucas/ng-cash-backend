@@ -11,11 +11,11 @@ export default class CreateUserController {
 
     const createUserUseCase = container.resolve(CreateUserUseCase);
 
-    const car = await createUserUseCase.execute({
+    const user = await createUserUseCase.execute({
       username,
       password,
     });
 
-    return response.json(car);
+    return response.json(user);
   }
 }
