@@ -1,0 +1,65 @@
+version: '3.4'
+
+services:
+  api:
+    build:
+      context: .
+      target: development
+    environment:
+      APP_WEB_URL: ${APP_WEB_URL}
+      PORT: ${PORT}
+      DB_TYPE: ${DB_TYPE}
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_SRC_BASE: ${DB_SRC_BASE}
+      DB_ENV: ${DB_ENV}
+      DB_PORT: ${DB_PORT}
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - app-connect
+    depends_on:
+      - postgres14-ng
+    command: >
+      sh -c "yarn start:dev"
+
+  postgres14-ng:
+    container_name: ${DB_HOST}
+    image: postgres:14.4
+    restart: unless-stopped
+    volumes:
+      - postgres14-ng-data:/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    networks:
+      - app-connect
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+
+  pgadmin-ng:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    logging:
+      driver: none
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres14-ng
+    networks:
+      - app-connect
+
+volumes:
+  postgres14-ng-data:
+
+networks:
+  app-connect:
+    driver: bridge
